@@ -1,0 +1,1019 @@
+{
+  "name": "TKO Send ID",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appsI86HWymwFoY31",
+          "mode": "list",
+          "cachedResultName": "TKO-MAADI",
+          "cachedResultUrl": "https://airtable.com/appsI86HWymwFoY31"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR4lppOL4yyO9vp",
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "https://airtable.com/appsI86HWymwFoY31/tblR4lppOL4yyO9vp"
+        },
+        "filterByFormula": "AND( NOT({ID Sent?}),   {Customer Status } = \"Active\" )",
+        "options": {
+          "view": {
+            "__rl": true,
+            "value": "viwGVs3qVQTN1pbGb",
+            "mode": "list",
+            "cachedResultName": "For ID Search",
+            "cachedResultUrl": "https://airtable.com/appsI86HWymwFoY31/tblR4lppOL4yyO9vp/viwGVs3qVQTN1pbGb"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6ab23e78-9440-4c3a-914e-e919f95a1c43",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "tKM3ausKtWiFMTzu",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        512,
+        0
+      ],
+      "id": "cfd4f33c-9245-4855-9604-4d50d96a0d86",
+      "name": "Loop Over Items",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ContentSid",
+              "value": "HXab253608ef858c8e5432d5af384b7e77"
+            },
+            {
+              "name": "To",
+              "value": "=whatsapp:+2{{ $json.cleanedPhone }}"
+            },
+            {
+              "name": "From",
+              "value": "whatsapp:+13613069901"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n\"1\": \"{{ $json.Client }}\",\n\"2\": \"{{ $json['Member ID'] }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        112
+      ],
+      "id": "c5f22881-2699-4cbf-9923-750939d2a7af",
+      "name": "Send Template",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "vtFA8G1AviGdsNTs",
+          "name": "Twilio TKO"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        112
+      ],
+      "id": "ccf8393f-3f10-4183-b12b-d6045006ac42",
+      "name": "Wait",
+      "webhookId": "578f34c5-3c81-4820-a775-7e551896e844"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appsI86HWymwFoY31",
+          "mode": "list",
+          "cachedResultName": "TKO-MAADI",
+          "cachedResultUrl": "https://airtable.com/appsI86HWymwFoY31"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblR4lppOL4yyO9vp",
+          "mode": "list",
+          "cachedResultName": "Clients",
+          "cachedResultUrl": "https://airtable.com/appsI86HWymwFoY31/tblR4lppOL4yyO9vp"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID Sent?": true,
+            "id": "={{ $('Loop Over Items').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Client",
+              "displayName": "Client",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone Number ",
+              "displayName": "Phone Number ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Subscribed Classes",
+              "displayName": "Subscribed Classes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Customer Status ",
+              "displayName": "Customer Status ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Subscription start Date",
+              "displayName": "Subscription start Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Subscription Due Date ",
+              "displayName": "Subscription Due Date ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Message status",
+              "displayName": "Message status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Modified",
+              "displayName": "Last Modified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Freeze Start Date ",
+              "displayName": "Freeze Start Date ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Freeze Due Date",
+              "displayName": "Freeze Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Freeze",
+              "displayName": "Freeze",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Contact Email",
+              "displayName": "Contact Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Days diff",
+              "displayName": "Days diff",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Member ID",
+              "displayName": "Member ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Sent?",
+              "displayName": "ID Sent?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Subscription Formula ",
+              "displayName": "Subscription Formula ",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Freeze formula",
+              "displayName": "Freeze formula",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Created",
+              "displayName": "Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "WAMID",
+              "displayName": "WAMID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1328,
+        112
+      ],
+      "id": "3b439c8c-059e-4332-a5b5-526dacb0dfde",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "tKM3ausKtWiFMTzu",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "09a98faf-70ff-47d5-8173-163c0efd605c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json['Phone Number '];\n\nif (!raw || typeof raw !== 'string') {\n  return {\n    ...$json,\n    cleanedPhone: null,\n    phoneValid: false,\n  };\n}\n\nconst cleanedPhone = raw\n  .replace(/[\\u202A-\\u202E\\u2066-\\u2069]/g, '')\n  .replace(/[^\\d]/g, '')\n  .trim();\n\nreturn {\n  ...$json,\n  cleanedPhone,\n  phoneValid: cleanedPhone.length > 0,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        112
+      ],
+      "id": "ef823cdf-d2d4-43b8-b4d2-91fef3350223",
+      "name": "Clean Phone"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8daaea91-7851-4b61-8171-41ceb97aebbd",
+              "name": "expired",
+              "value": "={{ $input.all().filter(item => Object.keys(item.json).length > 0).length || 0 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        -80
+      ],
+      "id": "5916ff5d-938d-44cf-a1e6-4c310f3c4a35",
+      "name": "Edit Fields1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ContentSid",
+              "value": "HXe6a7ed47fc70979fe6173e4445597eec"
+            },
+            {
+              "name": "To",
+              "value": "=whatsapp:+201000400355"
+            },
+            {
+              "name": "From",
+              "value": "whatsapp:+13613069901"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={\n\"1\": \"{{ $json.expired }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        -80
+      ],
+      "id": "cf46a64c-d408-4fa5-a436-eb196ea7ac31",
+      "name": "Summary Message1",
+      "executeOnce": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "vtFA8G1AviGdsNTs",
+          "name": "Twilio TKO"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-04-12T10:00:01.014+02:00",
+          "Readable date": "April 12th 2026, 10:00:01 am",
+          "Readable time": "10:00:01 am",
+          "Day of week": "Sunday",
+          "Year": "2026",
+          "Month": "April",
+          "Day of month": "12",
+          "Hour": "10",
+          "Minute": "00",
+          "Second": "01",
+          "Timezone": "Africa/Cairo (UTC+02:00)"
+        }
+      }
+    ],
+    "Send Template": [
+      {
+        "json": {
+          "account_sid": "AC1b39667da7a8b4faf72d82aea496bd17",
+          "api_version": "2010-04-01",
+          "body": "Hi Hamza sherif,\n\nEach member now has a short ID.\n\nYour ID is: 367\n\nPlease memorize it for future sessions.",
+          "date_created": "Sun, 12 Apr 2026 14:51:42 +0000",
+          "date_sent": null,
+          "date_updated": "Sun, 12 Apr 2026 14:51:42 +0000",
+          "direction": "outbound-api",
+          "error_code": null,
+          "error_message": null,
+          "from": "whatsapp:+13613069901",
+          "messaging_service_sid": null,
+          "num_media": "0",
+          "num_segments": "1",
+          "price": null,
+          "price_unit": null,
+          "sid": "MM216858dcb11b9a5e9b1c91288bf1a681",
+          "status": "queued",
+          "subresource_uris": {
+            "media": "/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages/MM216858dcb11b9a5e9b1c91288bf1a681/Media.json"
+          },
+          "to": "whatsapp:+201091515534",
+          "uri": "/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages/MM216858dcb11b9a5e9b1c91288bf1a681.json"
+        }
+      }
+    ],
+    "Wait": [
+      {
+        "json": {
+          "account_sid": "AC1b39667da7a8b4faf72d82aea496bd17",
+          "api_version": "2010-04-01",
+          "body": "Hi Hamza sherif,\n\nEach member now has a short ID.\n\nYour ID is: 367\n\nPlease memorize it for future sessions.",
+          "date_created": "Sun, 12 Apr 2026 14:51:42 +0000",
+          "date_sent": null,
+          "date_updated": "Sun, 12 Apr 2026 14:51:42 +0000",
+          "direction": "outbound-api",
+          "error_code": null,
+          "error_message": null,
+          "from": "whatsapp:+13613069901",
+          "messaging_service_sid": null,
+          "num_media": "0",
+          "num_segments": "1",
+          "price": null,
+          "price_unit": null,
+          "sid": "MM216858dcb11b9a5e9b1c91288bf1a681",
+          "status": "queued",
+          "subresource_uris": {
+            "media": "/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages/MM216858dcb11b9a5e9b1c91288bf1a681/Media.json"
+          },
+          "to": "whatsapp:+201091515534",
+          "uri": "/2010-04-01/Accounts/AC1b39667da7a8b4faf72d82aea496bd17/Messages/MM216858dcb11b9a5e9b1c91288bf1a681.json"
+        }
+      }
+    ],
+    "Update record": [
+      {
+        "json": {
+          "id": "recR6nSDhbpprhEnI",
+          "createdTime": "2025-11-23T11:17:17.000Z",
+          "fields": {
+            "Client": "Hamza sherif",
+            "Subscribed Classes": [
+              "receDCcjAS31XuzYk"
+            ],
+            "Customer Status ": "Active",
+            "Freeze formula": 0,
+            "Subscription start Date": "2026-04-11",
+            "Subscription Due Date ": "2026-05-11",
+            "Subscription Formula ": 1,
+            "Phone Number ": "01091515534",
+            "Last Modified": "2026-04-12T08:00:06.000Z",
+            "Created": "2025-11-23T11:17:17.000Z",
+            "Days diff": -29,
+            "ID": 623,
+            "Message status": "accepted",
+            "WAMID": "MMc83e0c023f6cb7dccb1b3fc157cecf8e",
+            "Member ID": 367,
+            "ID Sent?": true
+          }
+        }
+      }
+    ],
+    "Clean Phone": [
+      {
+        "json": {
+          "id": "recR6nSDhbpprhEnI",
+          "createdTime": "2025-11-23T11:17:17.000Z",
+          "Client": "Hamza sherif",
+          "Subscribed Classes": [
+            "receDCcjAS31XuzYk"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01091515534",
+          "Last Modified": "2026-04-11T18:00:22.000Z",
+          "Created": "2025-11-23T11:17:17.000Z",
+          "Days diff": -29,
+          "ID": 623,
+          "Message status": "accepted",
+          "WAMID": "MMc83e0c023f6cb7dccb1b3fc157cecf8e",
+          "Member ID": 367,
+          "cleanedPhone": "01091515534",
+          "phoneValid": true
+        }
+      }
+    ],
+    "Search records": [
+      {
+        "json": {
+          "id": "recR6nSDhbpprhEnI",
+          "createdTime": "2025-11-23T11:17:17.000Z",
+          "Client": "Hamza sherif",
+          "Subscribed Classes": [
+            "receDCcjAS31XuzYk"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01091515534",
+          "Last Modified": "2026-04-11T18:00:22.000Z",
+          "Created": "2025-11-23T11:17:17.000Z",
+          "Days diff": -29,
+          "ID": 623,
+          "Message status": "accepted",
+          "WAMID": "MMc83e0c023f6cb7dccb1b3fc157cecf8e",
+          "Member ID": 367
+        }
+      },
+      {
+        "json": {
+          "id": "rec6eU7aWiGMdItrN",
+          "createdTime": "2026-04-11T15:43:13.000Z",
+          "Client": "Nour Ayad",
+          "Subscribed Classes": [
+            "recyCHbwni3SQ0X08"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-08",
+          "Subscription Due Date ": "2026-05-09",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01112824242",
+          "Last Modified": "2026-04-11T15:43:33.000Z",
+          "Created": "2026-04-11T15:43:13.000Z",
+          "Days diff": -27,
+          "ID": 991,
+          "Member ID": 475
+        }
+      },
+      {
+        "json": {
+          "id": "rec6FGYKSsvCKnBTE",
+          "createdTime": "2026-04-11T17:53:37.000Z",
+          "Client": "Ali ahmed mohamed abdelrazik ",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01020450545",
+          "Last Modified": "2026-04-11T17:54:08.000Z",
+          "Created": "2026-04-11T17:53:37.000Z",
+          "Days diff": -29,
+          "ID": 992,
+          "Member ID": 476
+        }
+      },
+      {
+        "json": {
+          "id": "reckAhmX9r8uOd1Mp",
+          "createdTime": "2026-04-11T17:54:37.000Z",
+          "Client": "Amr abdel naser",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01027340745",
+          "Last Modified": "2026-04-11T17:54:52.000Z",
+          "Created": "2026-04-11T17:54:37.000Z",
+          "Days diff": -29,
+          "ID": 993,
+          "Member ID": 477
+        }
+      },
+      {
+        "json": {
+          "id": "reckvInkq06dr706q",
+          "createdTime": "2026-04-11T17:55:08.000Z",
+          "Client": "Abdelrahman yehia",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01016504474",
+          "Last Modified": "2026-04-11T17:55:22.000Z",
+          "Created": "2026-04-11T17:55:08.000Z",
+          "Days diff": -29,
+          "ID": 994,
+          "Member ID": 478
+        }
+      },
+      {
+        "json": {
+          "id": "rec6tVym937KTtA8S",
+          "createdTime": "2026-04-11T17:55:34.000Z",
+          "Client": "Mohamed ahmed mohamed ",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01066097601",
+          "Last Modified": "2026-04-11T17:55:50.000Z",
+          "Created": "2026-04-11T17:55:34.000Z",
+          "Days diff": -29,
+          "ID": 995,
+          "Member ID": 479
+        }
+      },
+      {
+        "json": {
+          "id": "rec0DpuUqaNlt3r3w",
+          "createdTime": "2026-04-11T17:56:02.000Z",
+          "Client": "Ali khaled helmy",
+          "Subscribed Classes": [
+            "rec5GtJlCUCvFor3j"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01116339215",
+          "Last Modified": "2026-04-11T17:56:19.000Z",
+          "Created": "2026-04-11T17:56:02.000Z",
+          "Days diff": -29,
+          "ID": 996,
+          "Member ID": 480
+        }
+      },
+      {
+        "json": {
+          "id": "recK0Nw8JzHhKbP73",
+          "createdTime": "2026-04-11T17:56:35.000Z",
+          "Client": "Hamza mohamed alaa",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01105660807",
+          "Last Modified": "2026-04-11T17:56:54.000Z",
+          "Created": "2026-04-11T17:56:35.000Z",
+          "Days diff": -29,
+          "ID": 997,
+          "Member ID": 481
+        }
+      },
+      {
+        "json": {
+          "id": "recL1dc9pn3lmX6a1",
+          "createdTime": "2026-04-11T17:57:07.000Z",
+          "Client": "Omar radwan",
+          "Subscribed Classes": [
+            "rec5GtJlCUCvFor3j"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01207060450",
+          "Last Modified": "2026-04-11T17:57:22.000Z",
+          "Created": "2026-04-11T17:57:07.000Z",
+          "Days diff": -29,
+          "ID": 998,
+          "Member ID": 482
+        }
+      },
+      {
+        "json": {
+          "id": "recOEBIH8a0RAv1e2",
+          "createdTime": "2026-04-11T17:58:38.000Z",
+          "Client": "Yousef el ghalab",
+          "Subscribed Classes": [
+            "rec5GtJlCUCvFor3j"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01022553905",
+          "Last Modified": "2026-04-11T17:58:54.000Z",
+          "Created": "2026-04-11T17:58:38.000Z",
+          "Days diff": -29,
+          "ID": 999,
+          "Member ID": 483
+        }
+      },
+      {
+        "json": {
+          "id": "recZNy2tICUXyYflW",
+          "createdTime": "2026-04-11T17:59:08.000Z",
+          "Client": "Ahmed mohamed adel",
+          "Subscribed Classes": [
+            "rec5GtJlCUCvFor3j"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01070488415",
+          "Last Modified": "2026-04-11T17:59:20.000Z",
+          "Created": "2026-04-11T17:59:08.000Z",
+          "Days diff": -29,
+          "ID": 1000,
+          "Member ID": 484
+        }
+      },
+      {
+        "json": {
+          "id": "recXcLMMfb2jZZKrR",
+          "createdTime": "2026-04-11T18:03:23.000Z",
+          "Client": "Mohamed ahmed Afifi",
+          "Subscribed Classes": [
+            "rec5GtJlCUCvFor3j"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-11",
+          "Subscription Due Date ": "2026-05-11",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01204738779",
+          "Last Modified": "2026-04-11T18:03:42.000Z",
+          "Created": "2026-04-11T18:03:23.000Z",
+          "Days diff": -29,
+          "ID": 1001,
+          "Member ID": 485
+        }
+      },
+      {
+        "json": {
+          "id": "rectMNLTeLaLsFnDm",
+          "createdTime": "2026-04-11T22:13:22.000Z",
+          "Client": "Yousef mohamed",
+          "Subscribed Classes": [
+            "recZStsfF5BRdJOSO"
+          ],
+          "Customer Status ": "Active",
+          "Freeze formula": 0,
+          "Subscription start Date": "2026-04-12",
+          "Subscription Due Date ": "2026-05-12",
+          "Subscription Formula ": 1,
+          "Phone Number ": "01125770876",
+          "Last Modified": "2026-04-11T22:13:36.000Z",
+          "Created": "2026-04-11T22:13:22.000Z",
+          "Days diff": -30,
+          "ID": 1002,
+          "Member ID": 486
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Template": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Phone": {
+      "main": [
+        [
+          {
+            "node": "Send Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Summary Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bdece9a9-6900-4be3-b353-115822097fe4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bbca4ebfba122420b89ef35809614a39f08bc24b41d83eba3ed2b2ba981cea20"
+  },
+  "id": "oDwpmQKOGgSISHNB",
+  "tags": []
+}
