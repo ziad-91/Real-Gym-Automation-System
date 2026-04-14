@@ -1,10 +1,6 @@
 # Real-Gym-Automation-System
 A real system I built for my client that increased revenue by 30% every month &amp; saved 10hrs/week
 
-# Gym Membership Automation System
-
-Designed and deployed a real-world automation system to improve revenue collection and operational efficiency for a gym.
-
 This project combines workflow automation, data modeling, and system design to solve real business problems under practical constraints.
 
 ---
