@@ -1,6 +1,8 @@
 # Real-Gym-Automation-System
 A real system I built for my client that increased revenue by 30% every month &amp; saved 10hrs/week
 
+# Gym Membership Automation System
+
 Designed and deployed a real-world automation system to improve revenue collection and operational efficiency for a gym.
 
 This project combines workflow automation, data modeling, and system design to solve real business problems under practical constraints.
@@ -32,11 +34,13 @@ The system connects **Airtable (data layer)**, **n8n (automation engine)**, and 
 
 ## System Architecture
 
+```mermaid
 flowchart TD
 A[Airtable - Data & Logic Layer] --> B[n8n - Automation Layer]
 B --> C[Twilio WhatsApp API]
 C --> D[Members]
 B --> E[Gym Owner]
+```
 
 ---
 
@@ -57,6 +61,7 @@ Manual follow-up on expiring memberships led to:
 
 ### Flow
 
+```mermaid
 flowchart TD
 A[Airtable logic] --> B[Expiring members]
 A --> C[Expired members]
@@ -64,28 +69,7 @@ B --> D[n8n workflow]
 C --> D
 D --> E[Send WhatsApp reminders]
 D --> F[Send owner summary]
-
-
-### Outcome
-- Eliminated manual chasing  
-- Significantly improved payment consistency  (30% revenue increase every month)
-
----
-
-## System 2 — Reactivation Campaign System
-
-### Problem
-No structured way to re-engage inactive or expired members.
-
-### Solution
-- Built a **webhook-triggered campaign system**
-- Each class has a trigger button in Airtable
-- Automatically:
-  - fetch expired members of that class  
-  - send targeted WhatsApp campaigns  
-
-### Flow
-
+```
 
 ### Outcome
 - Eliminated manual chasing  
@@ -107,6 +91,13 @@ No structured way to re-engage inactive or expired members.
 
 ### Flow
 
+```mermaid
+flowchart TD
+A[Airtable button click] --> B[Webhook]
+B --> C[Identify class]
+C --> D[Fetch expired members]
+D --> E[Send targeted messages]
+```
 
 ### Outcome
 - Enabled fast, segmented marketing campaigns  
@@ -131,12 +122,13 @@ Check-in process was slow and error-prone:
 
 ### Flow
 
+```mermaid
 flowchart TD
 A[Daily trigger] --> B[Fetch active members where idSent = false]
 B --> C[Send ID via WhatsApp]
 C --> D[Update Airtable]
 D --> E[Mark idSent = true]
-
+```
 
 ### Outcome
 - Reduced check-in friction significantly  
@@ -206,7 +198,6 @@ Sensitive data (API keys, phone numbers, webhook URLs) has been removed and repl
 
 ## Author
 
-Ziad El Marsafawy  
-Data Science Student — Cairo University  
+Ziad Marsafawy  
+Computer Science Student — Cairo University  
 Focused on building real-world AI and automation systems
-
